@@ -5,6 +5,7 @@ import numpy as np  # contains helpful math functions like numpy.exp()
 import numpy.random as random  # see numpy.random module
 # import random  # alternative to numpy.random module
 from TravelingSalesmanProblem import *
+import pandas
 
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
@@ -85,17 +86,29 @@ def simulated_annealing(problem, schedule):
             current = nextV
         time += 1
 
+def schedule(time):
+    return (alpha**time)*temperature
 
 alpha = 0.95
 temperature=1e4
 
-def schedule(time):
-    return (alpha**time)*temperature
+## Test code
+city = []
+initialPath = []
+intialPathLength = []
+finalPathLength = []
+finalPath = []
+for i in range(10, 31):
+    num_cities = i
+    capitals_tsp = TravelingSalesmanProblem(capitals_list[:num_cities])
+    starting_city = capitals_list[0]
+    print("Running for %i cities" %i)
+    city.append(num_cities)
+    intialPathLength.append(-capitals_tsp.get_value())
+    initialPath.append(capitals_list[:num_cities])
+    result = simulated_annealing(capitals_tsp, schedule)
+    finalPathLength.append(-result.get_value())
+    finalPath.append(result.path)
 
-
-test_cities = [('DC', (11, 1)), ('SF', (0, 0)), ('PHX', (2, -3)), ('LA', (0, -4))]
-tsp = TravelingSalesmanProblem(test_cities)
-result = simulated_annealing(tsp, schedule)
-print("Final path length: {:.2f}".format(-result.get_value()))
-
-print(result.path)
+for i in range(0,len(city)):
+    print("Cities: %i. Initial Path Length: %8.2f Final Path Length: %8.2f" % (city[i],intialPathLength[i],finalPathLength[i]))
